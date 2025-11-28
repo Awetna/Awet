@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korebta Cafe & Restaurant</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #f2a900; 
+            --header-red: #d32f2f;     
+            --btn-orange: #f57c00;
+            --text-dark: #333;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- UTILITIES --- */
+        .page-section {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.4s ease-in-out;
+            padding-bottom: 80px;
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 1. HOME PAGE STYLES --- */
+        #home-page {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://img.freepik.com/free-photo/restaurant-interior_1127-3394.jpg?w=1080');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            color: white;
+            display: flex; /* Flex to center content */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        #home-page.active {
+            display: flex; /* Override block for home to keep flex layout */
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-orange);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .brand-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .btn-main {
+            background-color: var(--header-red);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4);
+            transition: transform 0.2s;
+        }
+        .btn-main:active {
+            transform: scale(0.95);
+        }
+
+        /* --- 2. NAVBAR (Used in Menu & Cart) --- */
+        .app-navbar {
+            background-color: var(--header-red);
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        .nav-icon { font-size: 1.3rem; cursor: pointer; padding: 5px; }
+        .nav-title { font-size: 1.1rem; font-weight: 600; margin: 0; }
+
+        .cart-badge-container { position: relative; cursor: pointer; }
+        .cart-badge {
+            position: absolute;
+            top: -5px; right: -8px;
+            background: white; color: var(--header-red);
+            font-size: 0.7rem; font-weight: bold;
+            border-radius: 50%;
+            width: 18px; height: 18px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* --- 3. MENU STYLES --- */
+        .category-scroll {
+            display: flex; overflow-x: auto; padding: 15px 10px;
+            scrollbar-width: none; background: var(--bg-light);
+        }
+        .category-scroll::-webkit-scrollbar { display: none; }
+
+        .cat-pill {
+            background: white; border: 1px solid #ddd;
+            border-radius: 50px; padding: 8px 18px; margin-right: 10px;
+            white-space: nowrap; font-size: 0.9rem; font-weight: 600; color: #555;
+            transition: 0.3s;
+        }
+        .cat-pill.active {
+            background-color: var(--header-red); color: white; border-color: var(--header-red);
+            box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
+        }
+
+        .menu-grid { padding: 0 10px; }
+        .menu-card {
+            background: white; border-radius: 15px; overflow: hidden;
+            height: 100%; display: flex; flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: relative;
+        }
+        
+        .img-wrapper {
+            height: 160px; width: 100%; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; padding: 5px;
+        }
+        .menu-img {
+            width: 100%; height: 100%; object-fit: contain;
+            transform: scale(1.15); transition: transform 0.3s;
+        }
+        
+        .card-info { padding: 5px 10px 10px; text-align: center; flex-grow: 1; }
+        .item-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 2px; color: #333; }
+        .item-price { color: var(--btn-orange); font-weight: 700; font-size: 1rem; }
+        
+        .btn-add {
+            background: var(--btn-orange); color: white; border: none; width: 100%;
+            padding: 12px 0; font-weight: 700; border-radius: 0; margin-top: auto;
+        }
+        .btn-add:active { background: #e65100; }
+
+        /* --- 4. CART PAGE STYLES --- */
+        .cart-item {
+            background: white; border-radius: 10px; padding: 10px; margin-bottom: 10px;
+            display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .cart-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 15px; }
+        .cart-details { flex-grow: 1; }
+        .cart-title { font-weight: 600; font-size: 0.95rem; margin: 0; }
+        .cart-price { color: var(--btn-orange); font-weight: 700; font-size: 0.9rem; }
+        
+        .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        .btn-qty { 
+            width: 25px; height: 25px; border-radius: 50%; border: 1px solid #ddd; 
+            background: white; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; cursor: pointer;
+        }
+        .btn-qty:active { background: #eee; }
+
+        .cart-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: white; padding: 20px; border-top-left-radius: 20px; border-top-right-radius: 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 1000;
+        }
+        .total-row { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; }
+        .btn-checkout {
+            width: 100%; background: var(--header-red); color: white; border: none;
+            padding: 15px; border-radius: 12px; font-weight: 700; font-size: 1rem;
+        }
+
+        /* --- TOAST --- */
+        .custom-toast {
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 10px 20px; border-radius: 30px;
+            font-size: 0.9rem; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 2000;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: max-content;
+        }
+        .custom-toast.show { opacity: 1; bottom: 100px; }
+
+        .empty-cart-msg { text-align: center; margin-top: 50px; color: #999; }
+        .empty-cart-msg i { font-size: 3rem; margin-bottom: 15px; color: #ddd; }
+
+    </style>
+</head>
+<body>
+
+    <!-- ==================== VIEW 1: HOME PAGE ==================== -->
+    <div id="home-page" class="page-section active">
+        <div class="brand-title">Welcome To <br>ኮረብታ <br> DIGITAL MENU</div>
+        <div class="brand-subtitle">Authentic Taste, Modern Vibe.</div>
+        <button class="btn-main" onclick="navigateTo('menu')">
+            Enter Now <i class="fa-solid fa-arrow-right ms-2"></i>
+        </button>
+    </div>
+
+    <!-- ==================== VIEW 2: MENU PAGE ==================== -->
+    <div id="menu-page" class="page-section">
+        <!-- Menu Navbar -->
+        <div class="app-navbar">
+            <i class="fa-solid fa-arrow-left nav-icon" onclick="navigateTo('home')"></i>
+            <div class="nav-title">Menu</div>
+            <div class="cart-badge-container" onclick="navigateTo('cart')">
+                <i class="fa-solid fa-shopping-basket nav-icon"></i>
+                <span class="cart-badge" id="menu-cart-count">0</span>
+            </div>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="category-scroll">
+            <button class="cat-pill active" data-id="all">ሁሉም</button>
+            <button class="cat-pill" data-id="burger">በርገር</button>
+            <button class="cat-pill" data-id="pizza">ፒዛ</button>
+            <button class="cat-pill" data-id="ethiopian">ባህላዊ</button>
+            <button class="cat-pill" data-id="drink">መጠጥ</button>
+        </div>
+
+        <!-- Menu Grid -->
+        <div class="container-fluid menu-grid mt-2">
+            <div class="row g-2" id="menu-row">
+                <!-- Javascript will load items here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== VIEW 3: CART PAGE ==================== -->
+    <div id="cart-page" class="page-section">
+        <!-- Cart Navbar -->
+        <div class="app-navbar">
+            <i class="fa-solid fa-arrow-left nav-icon" onclick="navigateTo('menu')"></i>
+            <div class="nav-title">My Cart</div>
+            <div style="width: 24px;"></div> <!-- Spacer to balance layout -->
+        </div>
+
+        <!-- Cart Items List -->
+        <div class="container mt-3" id="cart-items-container">
+            <!-- Items injected by JS -->
+        </div>
+
+        <!-- Cart Footer -->
+        <div class="cart-footer" id="cart-footer">
+            <div class="total-row">
+                <span>Total</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="btn-checkout" onclick="alert('Order Sent to Kitchen!')">Checkout Now</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="custom-toast" id="toast">
+        <i class="fa-solid fa-check-circle text-success"></i> <span id="toast-msg">Item Added</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA STORE ---
+        const menuData = [
+            { id: 1, title: "ስፔሻል ክትፎ", category: "ethiopian", price: 15.50, img: "https://img.freepik.com/free-photo/ethiopian-food-table_23-2148851416.jpg?w=740" },
+            { id: 2, title: "ኮረብታ በርገር ሙሉ", category: "burger", price: 12.00, img: "https://img.freepik.com/free-photo/view-3d-burger_23-2150914673.jpg?w=740" },
+            { id: 3, title: "ዶሮ ወጥ", category: "ethiopian", price: 18.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Doro_wat.jpg/800px-Doro_wat.jpg" },
+            { id: 4, title: "ማኪያቶ", category: "pizza", price: 12.49, img: "https://img.freepik.com/free-photo/hot-pizza-slice-with-melting-cheese-rustic-wooden-table_140725-6973.jpg?w=740" },
+            { id: 5, title: "ስፔሻል ፒዛ", category: "burger", price: 8.50, img: "https://img.freepik.com/free-photo/crispy-chicken-burger-with-lettuce-cheese_140725-6974.jpg?w=740" },
+            { id: 6, title: "Macchiato", category: "drink", price: 2.00, img: "https://img.freepik.com/free-photo/coffee-cup_144627-33290.jpg?w=740" },
+            { id: 7, title: "የጾም ፍርፍር", category: "ethiopian", price: 9.00, img: "https://upload.wikimedia.org/wikipedia/commons/2/23/Injera_and_stews.jpg" },
+            { id: 8, title: "በርገር", category: "drink", price: 1.50, img: "https://img.freepik.com/free-photo/cola-glass-ice-cubes_144627-16478.jpg?w=740" },
+        ];
+
+        // State
+        let cart = []; 
+        let activeCategory = 'all';
+
+        // --- NAVIGATION SYSTEM ---
+        function navigateTo(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(el => {
+                el.classList.remove('active');
+                // Temporarily hide for fade effect
+                el.style.display = 'none';
+            });
+
+            // Show target page
+            const target = document.getElementById(pageId + '-page');
+            
+            // Flex for home, block for others
+            if(pageId === 'home') {
+                target.style.display = 'flex';
+            } else {
+                target.style.display = 'block';
+            }
+            
+            // Small timeout to allow display:block to apply before adding class for animation
+            setTimeout(() => {
+                target.classList.add('active');
+            }, 10);
+
+            // Special actions
+            if (pageId === 'cart') renderCartPage();
+            if (pageId === 'menu') renderMenu();
+            
+            window.scrollTo(0,0);
+        }
+
+        // --- MENU LOGIC ---
+        function renderMenu() {
+            const container = document.getElementById('menu-row');
+            const filtered = activeCategory === 'all' 
+                ? menuData 
+                : menuData.filter(i => i.category === activeCategory);
+
+            container.innerHTML = filtered.map(item => `
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="menu-card">
+                        <div class="img-wrapper">
+                            <img src="${item.img}" class="menu-img" alt="${item.title}" loading="lazy">
+                        </div>
+                        <div class="card-info">
+                            <h3 class="item-name text-truncate">${item.title}</h3>
+                            <div class="item-price">$${item.price.toFixed(2)}</div>
+                        </div>
+                        <button class="btn-add" onclick="addToCart(${item.id})">
+                            ADD TO CART
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            updateCartCount();
+        }
+
+        // Filter Pills Event
+        document.querySelectorAll('.cat-pill').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                activeCategory = e.target.dataset.id;
+                renderMenu();
+            });
+        });
+
+        // --- CART LOGIC ---
+        function addToCart(id) {
+            const item = menuData.find(i => i.id === id);
+            const existing = cart.find(c => c.id === id);
+
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ ...item, qty: 1 });
+            }
+
+            updateCartCount();
+            showToast(`${item.title} added!`);
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(c => c.id !== id);
+            renderCartPage();
+            updateCartCount();
+        }
+
+        function changeQty(id, change) {
+            const item = cart.find(c => c.id === id);
+            if (!item) return;
+
+            item.qty += change;
+            if (item.qty <= 0) {
+                removeFromCart(id);
+            } else {
+                renderCartPage();
+                updateCartCount();
+            }
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('menu-cart-count').innerText = count;
+        }
+
+        function renderCartPage() {
+            const container = document.getElementById('cart-items-container');
+            const totalEl = document.getElementById('cart-total');
+            const footer = document.getElementById('cart-footer');
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-cart-msg">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <h3>Your Cart is Empty</h3>
+                        <p>Go back to menu and add some delicious food!</p>
+                        <button class="btn btn-outline-danger mt-3" onclick="navigateTo('menu')">Browse Menu</button>
+                    </div>`;
+                footer.style.display = 'none';
+                return;
+            }
+
+            footer.style.display = 'block';
+            let total = 0;
+
+            container.innerHTML = cart.map(item => {
+                total += item.price * item.qty;
+                return `
+                <div class="cart-item">
+                    <img src="${item.img}" class="cart-img" alt="">
+                    <div class="cart-details">
+                        <h4 class="cart-title">${item.title}</h4>
+                        <span class="cart-price">$${item.price.toFixed(2)}</span>
+                        <div class="qty-controls">
+                            <div class="btn-qty" onclick="changeQty(${item.id}, -1)"><i class="fa-solid fa-minus"></i></div>
+                            <span style="font-weight:600; width:20px; text-align:center;">${item.qty}</span>
+                            <div class="btn-qty" onclick="changeQty(${item.id}, 1)"><i class="fa-solid fa-plus"></i></div>
+                        </div>
+                    </div>
+                    <button class="btn text-danger" onclick="removeFromCart(${item.id})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                `;
+            }).join('');
+
+            totalEl.innerText = '$' + total.toFixed(2);
+        }
+
+        // --- TOAST UI ---
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // Initialize
+        renderMenu();
+
+    </script>
+</body>
+</html>
